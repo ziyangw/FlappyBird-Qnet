@@ -1,0 +1,53 @@
+Learning Rate: 0.1
+Parameters: (2, 30, 30, 2, 4000, 3500, 0) Time: 0:05:41.851956 Score: 100
+Parameters: (2, 20, 20, 2, 4000, 3500, 0) Time: 0:07:27.751705 Score: 100
+Parameters: (2, 10, 10, 2, 4000, 3500, 0) Time: 0:05:43.172044 Score: 100
+Parameters: (2, 10, 5, 2, 4000, 3500, 0) Time: 0:10:47.147896 Score: 100
+Parameters: (2, 5, 5, 2, 4000, 3500, 0) Time: 0:06:46.540080 Score: 100
+Parameters: (2, 3, 2, 2, 4000, 3500, 0) Time: 1:00:01.004202 Score: 94
+Parameters: (2, 30, 30, 2, 4000, 1000, 0) Time: 0:10:52.870779 Score: 100
+Parameters: (2, 20, 20, 2, 4000, 1000, 0) Time: 0:08:31.630876 Score: 100
+Parameters: (2, 10, 10, 2, 4000, 1000, 0) Time: 0:06:10.816177 Score: 100
+Parameters: (2, 30, 30, 2, 1000, 200, 0) Time: 0:02:59.935147 Score: 100
+
+Learning Rate: 0.5
+Parameters: (2, 30, 30, 2, 4000, 3500, 0) Time: 0:36:11.192127 Score: 100
+Parameters: (2, 20, 20, 2, 4000, 3500, 0) Time: 0:07:36.061074 Score: 100
+Parameters: (2, 10, 10, 2, 4000, 3500, 0) Time: 0:06:21.576305 Score: 100
+Parameters: (2, 10, 5, 2, 4000, 3500, 0) Time: 0:11:47.422101 Score: 100
+Parameters: (2, 5, 5, 2, 4000, 3500, 0) Time: 0:09:34.119679 Score: 100
+Parameters: (2, 3, 2, 2, 4000, 3500, 0) Time: 1:00:01.023133 Score: 0
+Parameters: (2, 30, 30, 2, 4000, 1000, 0) Time: 0:05:45.604068 Score: 100
+Parameters: (2, 20, 20, 2, 4000, 1000, 0) Time: 0:05:17.899215 Score: 100
+Parameters: (2, 10, 10, 2, 4000, 1000, 0) Time: 0:05:55.854204 Score: 100
+Parameters: (2, 30, 30, 2, 1000, 200, 0) Time: 0:03:49.866101 Score: 100
+Parameters: (2, 20, 20, 2, 1000, 200, 0) Time: 0:10:06.404462 Score: 100
+Parameters: (2, 10, 10, 2, 1000, 200, 0) Time: 0:03:54.024164 Score: 100
+Parameters: (2, 30, 30, 2, 200, 140, 0) Time: 0:23:16.689675 Score: 100
+
+1 Hidden Layer:
+Parameters: (2, 30, 30, 2, 4000, 3500, 0) Time: 0:10:37.538135 Score: 100
+Parameters: (2, 20, 20, 2, 4000, 3500, 0) Time: 0:15:09.360119 Score: 100
+Parameters: (2, 10, 10, 2, 4000, 3500, 0) Time: 0:18:59.858549 Score: 100
+Parameters: (2, 10, 5, 2, 4000, 3500, 0) Time: 0:12:23.086789 Score: 100
+Parameters: (2, 5, 5, 2, 4000, 3500, 0) Time: 0:24:05.807403 Score: 100
+Parameters: (2, 3, 2, 2, 4000, 3500, 0) Time: 0:35:00.344378 Score: 100
+Parameters: (2, 30, 30, 2, 4000, 1000, 0) Time: 0:07:26.236721 Score: 100
+Parameters: (2, 20, 20, 2, 4000, 1000, 0) Time: 0:10:14.935635 Score: 100
+Parameters: (2, 10, 10, 2, 4000, 1000, 0) Time: 0:16:52.762155 Score: 100
+Parameters: (2, 30, 30, 2, 1000, 200, 0) Time: 0:07:30.333938 Score: 100
+
+3 Hidden Layers:
+Parameters: (2, 30, 30, 2, 4000, 3500, 0) Time: 0:09:42.043835 Score: 100
+Parameters: (2, 20, 20, 2, 4000, 3500, 0) Time: 0:08:44.944794 Score: 100
+Parameters: (2, 10, 10, 2, 4000, 3500, 0) Time: 0:07:36.648292 Score: 100
+Parameters: (2, 10, 5, 2, 4000, 3500, 0) Time: 0:09:32.109932 Score: 100
+Parameters: (2, 5, 5, 2, 4000, 3500, 0) Time: 0:11:19.921992 Score: 100
+Parameters: (2, 3, 2, 2, 4000, 3500, 0) Time: 1:00:01.022348 Score: 1
+Parameters: (2, 30, 30, 2, 4000, 1000, 0) Time: 0:06:45.198116 Score: 100
+Parameters: (2, 20, 20, 2, 4000, 1000, 0) Time: 0:07:08.772380 Score: 100
+Parameters: (2, 10, 10, 2, 4000, 1000, 0) Time: 0:07:05.011283 Score: 100
+Parameters: (2, 30, 30, 2, 1000, 200, 0) Time: 0:06:28.221208 Score: 100
+Parameters: (2, 20, 20, 2, 1000, 200, 0) Time: 0:07:13.089885 Score: 100
+Parameters: (2, 10, 10, 2, 1000, 200, 0) Time: 0:07:20.011275 Score: 100
+Parameters: (2, 30, 30, 2, 200, 140, 0) Time: 0:04:57.518144 Score: 100

@@ -1,10 +1,12 @@
 from itertools import cycle
 import random
 import sys
+import json
+import datetime
 
 import pygame
 from pygame.locals import *
-
+from NeuralNet import NeuralNet
 
 FPS = 30
 SCREENWIDTH  = 288
@@ -14,6 +16,23 @@ PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
 BASEY        = SCREENHEIGHT * 0.79
 # image, sound and hitmask  dicts
 IMAGES, SOUNDS, HITMASKS = {}, {}, {}
+
+START_TEST_TIME = datetime.datetime.now()
+TIME_NOW = datetime.datetime.now()
+PARAMETER_INDEX = 0
+PARAMETER = [(2, 30, 30, 2, 4000, 3500, 0), (2, 20, 20, 2, 4000, 3500, 0), (2, 10, 10, 2, 4000, 3500, 0),
+             (2, 10, 5, 2, 4000, 3500, 0), (2, 5, 5, 2, 4000, 3500, 0), (2, 3, 2, 2, 4000, 3500, 0),
+             (2, 30, 30, 2, 4000, 1000, 0), (2, 20, 20, 2, 4000, 1000, 0), (2, 10, 10, 2, 4000, 1000, 0),
+             (2, 30, 30, 2, 1000, 200, 0), (2, 20, 20, 2, 1000, 200, 0), (2, 10, 10, 2, 1000, 200, 0),
+             (2, 30, 30, 2, 200, 140, 0), (2, 20, 20, 2, 200, 140, 0), (2, 10, 10, 2, 200, 140, 0),
+             (2, 30, 30, 2, 30, 20, 0), (2, 20, 20, 2, 30, 20, 0), (2, 10, 10, 2, 30, 20, 0),
+             (2, 30, 30, 2, 6, 4, 0), (2, 20, 20, 2, 6, 4, 0), (2, 10, 10, 2, 6, 4, 0),
+             (2, 30, 30, 2, 4000, 3500, 0.3), (2, 20, 20, 2, 4000, 3500, 0.5), (2, 10, 10, 2, 4000, 3500, 0.7)
+             ]
+MAX_SCORE = 0
+
+num_inputs, num_hidden1, num_hidden2, num_output, record_size, sub_record, gamma = PARAMETER[PARAMETER_INDEX]
+NN = NeuralNet(num_inputs, num_hidden1, num_hidden2, num_output, record_size, sub_record, gamma)
 
 # list of all possible players (tuple of 3 positions of flap)
 PLAYERS_LIST = (
@@ -58,7 +77,7 @@ except NameError:
 
 
 def main():
-    global SCREEN, FPSCLOCK
+    global SCREEN, FPSCLOCK, NN
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
@@ -158,13 +177,18 @@ def showWelcomeAnimation():
     playerShmVals = {'val': 0, 'dir': 1}
 
     while True:
+        #SOUNDS['wing'].play()
+        return {
+             'playery': playery + playerShmVals['val'],
+             'basex': basex,
+             'playerIndexGen': playerIndexGen,
+        }
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                # make first flap sound and return values for mainGame
-                SOUNDS['wing'].play()
+                #SOUNDS['wing'].play()
                 return {
                     'playery': playery + playerShmVals['val'],
                     'basex': basex,
@@ -190,6 +214,7 @@ def showWelcomeAnimation():
 
 
 def mainGame(movementInfo):
+    global NN, PARAMETER_INDEX, PARAMETER, START_TEST_TIME, TIME_NOW, MAX_SCORE
     score = playerIndex = loopIter = 0
     playerIndexGen = movementInfo['playerIndexGen']
     playerx, playery = int(SCREENWIDTH * 0.2), movementInfo['playery']
@@ -203,14 +228,14 @@ def mainGame(movementInfo):
 
     # list of upper pipes
     upperPipes = [
-        {'x': SCREENWIDTH + 200, 'y': newPipe1[0]['y']},
-        {'x': SCREENWIDTH + 200 + (SCREENWIDTH / 2), 'y': newPipe2[0]['y']},
+        {'x': playerx +  200 + SCREENWIDTH / 2, 'y': newPipe1[0]['y']},
+        {'x': playerx +  200 + SCREENWIDTH, 'y': newPipe2[0]['y']},
     ]
 
     # list of lowerpipe
     lowerPipes = [
-        {'x': SCREENWIDTH + 200, 'y': newPipe1[1]['y']},
-        {'x': SCREENWIDTH + 200 + (SCREENWIDTH / 2), 'y': newPipe2[1]['y']},
+        {'x': playerx + 200 + SCREENWIDTH / 2, 'y': newPipe1[1]['y']},
+        {'x': playerx + 200 + SCREENWIDTH, 'y': newPipe2[1]['y']},
     ]
 
     pipeVelX = -4
@@ -233,12 +258,24 @@ def mainGame(movementInfo):
                 if playery > -2 * IMAGES['player'][0].get_height():
                     playerVelY = playerFlapAcc
                     playerFlapped = True
-                    SOUNDS['wing'].play()
-
-        # check for crash here
-        crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
-                               upperPipes, lowerPipes)
-        if crashTest[0]:
+                    #SOUNDS['wing'].play()
+        (result, [flap, not_flap]) = NN.fly(playerx + IMAGES['player'][0].get_width(), playery + IMAGES['player'][0].get_height(), lowerPipes, IMAGES['pipe'][0].get_width(), IMAGES['player'][0].get_width())
+        if result == 1:
+            if playery > -2 * IMAGES['player'][0].get_height():
+                playerVelY = playerFlapAcc
+                playerFlapped = True
+                #SOUNDS['wing'].play()
+            
+        TIME_NOW = datetime.datetime.now()
+        if ((TIME_NOW - START_TEST_TIME).seconds > 3600):
+            tested_parameter = "Parameters: " + str(PARAMETER[PARAMETER_INDEX]) + " Time: " + str(TIME_NOW - START_TEST_TIME) + " Score: " + str(MAX_SCORE) + "\n"
+            START_TEST_TIME = datetime.datetime.now()
+            MAX_SCORE = 0
+            with open('data.txt', 'a') as outfile:
+                outfile.write(tested_parameter)
+            PARAMETER_INDEX += 1
+            num_inputs, num_hidden1, num_hidden2, num_output, record_size, sub_record, gamma = PARAMETER[PARAMETER_INDEX]
+            NN = NeuralNet(num_inputs, num_hidden1, num_hidden2, num_output, record_size, sub_record, gamma)
             return {
                 'y': playery,
                 'groundCrash': crashTest[1],
@@ -250,12 +287,33 @@ def mainGame(movementInfo):
             }
 
         # check for score
+        scored = False
         playerMidPos = playerx + IMAGES['player'][0].get_width() / 2
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + IMAGES['pipe'][0].get_width() / 2
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
                 score += 1
-                SOUNDS['point'].play()
+                MAX_SCORE = max(MAX_SCORE, score)
+                if (score == 100):
+                    tested_parameter = "Parameters: " + str(PARAMETER[PARAMETER_INDEX]) + " Time: " + str(TIME_NOW - START_TEST_TIME) + " Score: " + str(MAX_SCORE) + "\n"
+                    START_TEST_TIME = datetime.datetime.now()
+                    MAX_SCORE = 0
+                    with open('data.txt', 'a') as outfile:
+                        outfile.write(tested_parameter)
+                    PARAMETER_INDEX = (PARAMETER_INDEX + 1) % len(PARAMETER)
+                    num_inputs, num_hidden1, num_hidden2, num_output, record_size, sub_record, gamma = PARAMETER[PARAMETER_INDEX]
+                    NN = NeuralNet(num_inputs, num_hidden1, num_hidden2, num_output, record_size, sub_record, gamma)
+                    return {
+                        'y': playery,
+                        'groundCrash': crashTest[1],
+                        'basex': basex,
+                        'upperPipes': upperPipes,
+                        'lowerPipes': lowerPipes,
+                        'score': score,
+                        'playerVelY': playerVelY,
+                    }
+                scored = True
+                #SOUNDS['point'].play()
 
         # playerIndex basex change
         if (loopIter + 1) % 3 == 0:
@@ -287,6 +345,24 @@ def mainGame(movementInfo):
             upperPipes.pop(0)
             lowerPipes.pop(0)
 
+
+         # check for crash here
+        crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
+                               upperPipes, lowerPipes)
+        if crashTest[0]:
+            NN.update(True, scored, playery, pipeVelX)
+            return {
+                'y': playery,
+                'groundCrash': crashTest[1],
+                'basex': basex,
+                'upperPipes': upperPipes,
+                'lowerPipes': lowerPipes,
+                'score': score,
+                'playerVelY': playerVelY,
+            }
+        NN.update(crashTest[0], scored, playery, pipeVelX)
+        
+
         # draw sprites
         SCREEN.blit(IMAGES['background'], (0,0))
 
@@ -298,6 +374,11 @@ def mainGame(movementInfo):
         # print score so player overlaps the score
         showScore(score)
         SCREEN.blit(IMAGES['player'][playerIndex], (playerx, playery))
+
+        flapchance_string = "Flap: %s, Not flap: %s" % (flap, not_flap)
+        font = pygame.font.Font(None, 20)
+        chance_image = font.render(flapchance_string, 1, (0,0,0))
+        SCREEN.blit(chance_image, (10, SCREENHEIGHT-30))
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
@@ -317,11 +398,12 @@ def showGameOverScreen(crashInfo):
     upperPipes, lowerPipes = crashInfo['upperPipes'], crashInfo['lowerPipes']
 
     # play hit and die sounds
-    SOUNDS['hit'].play()
-    if not crashInfo['groundCrash']:
-        SOUNDS['die'].play()
+    #SOUNDS['hit'].play()
+    #if not crashInfo['groundCrash']:
+        #SOUNDS['die'].play()
 
     while True:
+        return None
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
@@ -408,7 +490,6 @@ def checkCrash(player, upperPipes, lowerPipes):
                       player['w'], player['h'])
         pipeW = IMAGES['pipe'][0].get_width()
         pipeH = IMAGES['pipe'][0].get_height()
-
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
             # upper and lower pipe rects
             uPipeRect = pygame.Rect(uPipe['x'], uPipe['y'], pipeW, pipeH)
